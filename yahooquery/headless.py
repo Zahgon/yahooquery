@@ -37,34 +37,7 @@ class YahooFinanceHeadless:
         self.driver = webdriver.Chrome(service=service, options=chrome_options)
 
     def login(self):
-        try:
-            self.driver.execute_script(f"window.open('{self.LOGIN_URL}');")
-            self.driver.switch_to.window(self.driver.window_handles[-1])
-            self.driver.find_element(By.ID, "login-username").send_keys(self.username)
-            self.driver.find_element(By.XPATH, "//input[@id='login-signin']").click()
-            password_element = WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.ID, "login-passwd"))
-            )
-            password_element.send_keys(self.password)
-            self.driver.find_element(By.XPATH, "//button[@id='login-signin']").click()
-
-            cookies = self.driver.get_cookies()
-            self.driver.quit()
-            self._add_cookies_to_jar(cookies)
-
-        except TimeoutException:
-            return (
-                "A timeout exception has occured.  Most likely it's due "
-                "to invalid login credentials.  Please try again."
-            )
+        pass
 
     def _add_cookies_to_jar(self, cookies: List[Dict]):
-        for cookie in cookies:
-            cookie_dict = {
-                "name": cookie["name"],
-                "value": cookie["value"],
-                "domain": cookie["domain"],
-                "path": cookie["path"],
-                "expires": None,  # You can set the expiration if available
-            }
-            self.cookies.set(**cookie_dict)
+        pass

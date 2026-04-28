@@ -186,73 +186,22 @@ class Research(_YahooFinance):
         super().__init__(**kwargs)
 
     def _construct_date(self, n=0):
-        return (datetime.now() - timedelta(days=n)).strftime("%Y-%m-%d")
+        pass
 
     def _construct_query(self, research_type, **kwargs):
-        operand_list = []
-        for k, v in kwargs.items():
-            v = convert_to_list(v, comma_split=True)
-            if k not in self._QUERY_OPTIONS[research_type]:
-                raise ValueError(f"{k} is an invalid argument for {research_type}")
-            options = self._QUERY_OPTIONS[research_type][k]["options"]
-            options = list(options.keys()) if isinstance(options, dict) else options
-            if any(elem not in options for elem in v):
-                raise ValueError(
-                    "{} is an invalid option for {}.".format(", ".join(v), k)
-                )
-            if not self._QUERY_OPTIONS[research_type][k]["multiple"] and len(v) > 1:
-                raise ValueError(f"Please provide only one value for {k}")
-            operand_list.append(self._construct_operand(k, v, research_type))
-        if len(operand_list) == 0:
-            return {}
-        if len(operand_list) == 1:
-            return operand_list[0]
-        return {"operands": operand_list, "operator": "and"}
+        pass
 
     def _construct_operand(self, k, v, research_type):
-        if len(v) == 1:
-            if isinstance(self._QUERY_OPTIONS[research_type][k]["options"], dict):
-                days = self._QUERY_OPTIONS[research_type][k]["options"][v[0]]
-                return {
-                    "operands": [k, self._construct_date(days), self._construct_date()],
-                    "operator": "btwn",
-                }
-            return {"operands": [k, v[0]], "operator": "eq"}
-        else:
-            d = {"operands": [], "operator": "or"}
-            for elem in v:
-                d["operands"].append({"operands": [k, elem], "operator": "eq"})
-            return d
+        pass
 
     def _construct_urls(self, config, params, **kwargs):
-        payloads = [
-            dict(kwargs.get("payload"), offset=i)
-            for i in range(0, kwargs.get("size"), 100)
-        ]
-        return [
-            self.session.post(url=config["path"], params=params, json=payload)
-            for payload in payloads
-        ]
+        pass
 
     def _get_symbol(self, response, params):
-        body = response.request.body.decode("utf-8")
-        return json.loads(body)["offset"]
+        pass
 
     def _get_research(self, research_type, size, **kwargs):
-        query = self._construct_query(research_type, **kwargs)
-        payload = self._DATA[research_type]
-        payload["query"] = query
-        data = self._get_data("research", size=size, payload=payload)
-        dataframes = []
-        try:
-            for key in data.keys():
-                columns = [x["label"] for x in data[key]["documents"][0]["columns"]]
-                dataframes.append(
-                    pd.DataFrame(data[key]["documents"][0]["rows"], columns=columns)
-                )
-            return pd.concat(dataframes, ignore_index=True)
-        except TypeError:
-            return data
+        pass
 
     def reports(self, size=100, **kwargs):
         """Retrieve research reports from Yahoo Finance
@@ -276,7 +225,7 @@ class Research(_YahooFinance):
                 option is passed for keyword argument, or if multiple values
                 are passed and only a single value is accepted
         """
-        return self._get_research("report", size, **kwargs)
+        pass
 
     def trades(self, size=100, **kwargs):
         """Retrieve trade ideas from Yahoo Finance
@@ -300,4 +249,4 @@ class Research(_YahooFinance):
                 option is passed for keyword argument, or if multiple values
                 are passed and only a single value is accepted
         """
-        return self._get_research("trade", size, **kwargs)
+        pass
